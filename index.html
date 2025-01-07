@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Приглашение на Той</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f3f4f6;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, button {
+      margin-top: 5px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #map {
+      margin-top: 20px;
+      width: 100%;
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Приглашаем на Той!</h1>
+    <p>Дата: 15 января 2025 года</p>
+    <p>Адрес: Астана, улица Абая 25</p>
+    <form id="invitation-form">
+      <label for="name">Ваше имя:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="guest">Имя гостя:</label>
+      <input type="text" id="guest" name="guest" required>
+
+      <label for="attendance">Вы придёте?</label>
+      <select id="attendance" name="attendance" required>
+        <option value="yes">Да</option>
+        <option value="no">Нет</option>
+      </select>
+
+      <button type="submit">Отправить</button>
+    </form>
+    <div id="map"></div>
+  </div>
+
+  <script>
+    // URL веб-приложения Google Apps Script
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyTmaOLKXTWb4DMghDPbB28I5Pmx6wes7WSxCTA1OzKI4CiMxF4c44h0OoaO0etyebr/exec';
+
+    // Обработка формы
+    document.getElementById('invitation-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = {
+        name: formData.get('name'),
+        guest: formData.get('guest'),
+        attendance: formData.get('attendance'),
+      };
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (response.ok) {
+          alert('Ваши данные успешно отправлены!');
+          e.target.reset();
+        } else {
+          alert('Произошла ошибка при отправке данных.');
+        }
+      } catch (error) {
+        alert('Не удалось отправить данные. Проверьте подключение.');
+        console.error(error);
+      }
+    });
+
+    // 2GIS карта
+    const script = document.createElement('script');
+    script.src = 'https://maps.api.2gis.com/2.0/loader.js?pkg=full&key=YOUR_2GIS_API_KEY';
+    document.body.appendChild(script);
+    script.onload = () => {
+      const map = new mapgl.Map('map', {
+        center: [71.44598, 51.16939], // Координаты Астаны
+        zoom: 15,
+      });
+    };
+  </script>
+</body>
+</html>
